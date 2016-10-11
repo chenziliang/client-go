@@ -29,7 +29,7 @@ func init() {
 	if err := announced.NewGroupMetaFactory(
 		&announced.GroupMetaFactoryArgs{
 			GroupName:                  batch.GroupName,
-			VersionPreferenceOrder:     []string{v1.SchemeGroupVersion.Version, v2alpha1.SchemeGroupVersion.Version},
+			VersionPreferenceOrder:     []string{v2alpha1.SchemeGroupVersion.Version, v1.SchemeGroupVersion.Version},
 			ImportPrefix:               "k8s.io/client-go/1.5/pkg/apis/batch",
 			AddInternalObjectsToScheme: batch.AddToScheme,
 		},

@@ -23,7 +23,8 @@ import (
 	v1beta1authentication "k8s.io/client-go/1.5/kubernetes/typed/authentication/v1beta1"
 	v1beta1authorization "k8s.io/client-go/1.5/kubernetes/typed/authorization/v1beta1"
 	v1autoscaling "k8s.io/client-go/1.5/kubernetes/typed/autoscaling/v1"
-	v1batch "k8s.io/client-go/1.5/kubernetes/typed/batch/v1"
+	// v2alpha1batch "k8s.io/client-go/1.5/kubernetes/typed/batch/v1"
+	v2alpha1batch "k8s.io/client-go/1.5/kubernetes/typed/batch/v2alpha1"
 	v1alpha1certificates "k8s.io/client-go/1.5/kubernetes/typed/certificates/v1alpha1"
 	v1core "k8s.io/client-go/1.5/kubernetes/typed/core/v1"
 	v1beta1extensions "k8s.io/client-go/1.5/kubernetes/typed/extensions/v1beta1"
@@ -42,7 +43,7 @@ type Interface interface {
 	Authentication() v1beta1authentication.AuthenticationInterface
 	Authorization() v1beta1authorization.AuthorizationInterface
 	Autoscaling() v1autoscaling.AutoscalingInterface
-	Batch() v1batch.BatchInterface
+	Batch() v2alpha1batch.BatchInterface
 	Certificates() v1alpha1certificates.CertificatesInterface
 	Extensions() v1beta1extensions.ExtensionsInterface
 	Policy() v1alpha1policy.PolicyInterface
@@ -59,7 +60,7 @@ type Clientset struct {
 	*v1beta1authentication.AuthenticationClient
 	*v1beta1authorization.AuthorizationClient
 	*v1autoscaling.AutoscalingClient
-	*v1batch.BatchClient
+	*v2alpha1batch.BatchClient
 	*v1alpha1certificates.CertificatesClient
 	*v1beta1extensions.ExtensionsClient
 	*v1alpha1policy.PolicyClient
@@ -108,7 +109,7 @@ func (c *Clientset) Autoscaling() v1autoscaling.AutoscalingInterface {
 }
 
 // Batch retrieves the BatchClient
-func (c *Clientset) Batch() v1batch.BatchInterface {
+func (c *Clientset) Batch() v2alpha1batch.BatchInterface {
 	if c == nil {
 		return nil
 	}
@@ -188,7 +189,7 @@ func NewForConfig(c *rest.Config) (*Clientset, error) {
 	if err != nil {
 		return nil, err
 	}
-	clientset.BatchClient, err = v1batch.NewForConfig(&configShallowCopy)
+	clientset.BatchClient, err = v2alpha1batch.NewForConfig(&configShallowCopy)
 	if err != nil {
 		return nil, err
 	}
@@ -230,7 +231,7 @@ func NewForConfigOrDie(c *rest.Config) *Clientset {
 	clientset.AuthenticationClient = v1beta1authentication.NewForConfigOrDie(c)
 	clientset.AuthorizationClient = v1beta1authorization.NewForConfigOrDie(c)
 	clientset.AutoscalingClient = v1autoscaling.NewForConfigOrDie(c)
-	clientset.BatchClient = v1batch.NewForConfigOrDie(c)
+	clientset.BatchClient = v2alpha1batch.NewForConfigOrDie(c)
 	clientset.CertificatesClient = v1alpha1certificates.NewForConfigOrDie(c)
 	clientset.ExtensionsClient = v1beta1extensions.NewForConfigOrDie(c)
 	clientset.PolicyClient = v1alpha1policy.NewForConfigOrDie(c)
@@ -249,7 +250,7 @@ func New(c *rest.RESTClient) *Clientset {
 	clientset.AuthenticationClient = v1beta1authentication.New(c)
 	clientset.AuthorizationClient = v1beta1authorization.New(c)
 	clientset.AutoscalingClient = v1autoscaling.New(c)
-	clientset.BatchClient = v1batch.New(c)
+	clientset.BatchClient = v2alpha1batch.New(c)
 	clientset.CertificatesClient = v1alpha1certificates.New(c)
 	clientset.ExtensionsClient = v1beta1extensions.New(c)
 	clientset.PolicyClient = v1alpha1policy.New(c)

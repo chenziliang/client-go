@@ -59,8 +59,6 @@ func getJobSpec(jobName string, task string) *v2alpha1batch.JobSpec {
 		Spec: podSpec,
 	}
 
-	var p int32 = 1
-	var duration int64 = 30
 	spec := v2alpha1batch.JobSpec {
 		Parallelism: &p,
 		Completions: &p,
@@ -72,7 +70,6 @@ func getJobSpec(jobName string, task string) *v2alpha1batch.JobSpec {
 
 func createScheduledJob(jobs v2alpha1.ScheduledJobInterface, jobName string, task string) {
 	template := v2alpha1batch.JobTemplateSpec {
-		Spec: *getJobSpec(jobName, task),
 	}
 
 	var startingDeadline int64 = 30
@@ -85,14 +82,14 @@ func createScheduledJob(jobs v2alpha1.ScheduledJobInterface, jobName string, tas
 
 	job := v2alpha1batch.ScheduledJob{
 		TypeMeta: unversioned.TypeMeta {
-			Kind: "ScheduledJob",
-			APIVersion: "batch/v2alpha1",
+			Kind: "batch",
+			APIVersion: "v2alpha1",
 		},
 		ObjectMeta: v1.ObjectMeta {
 			Name: jobName,
 			Namespace: "default",
 		},
-		Spec: spec,
+		Spec: *getJobSpec(jobName, task),
 	}
 
 	result, err := jobs.Create(&job)
@@ -108,9 +105,12 @@ func createJob(jobs v2alpha1.JobInterface, jobName string, task string) {
 		fmt.Println("Missing jobName")
 	}
 
+	var p int32 = 1
+	var duration int64 = 30
+
 	job := v2alpha1batch.Job{
 		TypeMeta: unversioned.TypeMeta {
-			Kind: "Job",
+			Kind: "batch",
 			APIVersion: "batch/v2alpha1",
 		},
 		ObjectMeta: v1.ObjectMeta {
@@ -170,7 +170,7 @@ func main() {
 	res, err = jobs.List(api.ListOptions{})
 	fmt.Printf("There are %d jobs in the cluster\n", len(res.Items))
 
-	_, err = jobs.Get(*jobName)
+	jobres, err := jobs.Get(*jobName)
 	if err != nil {
 		fmt.Printf("Failed to get job=%s, error=%s\n", *jobName, err)
 	}
@@ -180,5 +180,5 @@ func main() {
 	// fmt.Printf("%+v, %s\n", res, err)
 	fmt.Printf("There are %d scheduled jobs in the cluster\n", len(sres.Items))
 
-	createScheduledJob(scheduled, *jobName, *task)
+	createScheduledJob()
 }
